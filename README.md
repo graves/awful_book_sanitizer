@@ -104,7 +104,7 @@ awful_book_sanitizer --i /path/to/ocr-books --o /path/to/output --c llama-cpp-co
 
 ---
 
-## 🧠 Fun Fact  
+## 😸 Fun Fact  
 
 The hardest part about finetuning an LLM is managing all of the input and output files. 🤔
 
