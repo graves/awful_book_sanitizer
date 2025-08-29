@@ -20,7 +20,7 @@ o   .     `-. .----<(o)_--. .-'
    --------(_/------(_<_/--\_)--------hjw
 ```
 
-```bash
+```
 λ awful_text_sanitizer --help
 Clean up excerpts from books formatted as txt
 
