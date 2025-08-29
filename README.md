@@ -75,7 +75,7 @@ awful_book_sanitizer --i /path/to/ocr-books --o /path/to/output --c llama-cpp-co
 
 ---
 
-## 🧠 Architecture (In A Nutshell)  
+## 🕌 Architecture (In A Nutshell)  
 
 - **Text Splitter**: Divides text into chunks of 500 tokens (like a greedy librarian).  
 - **Template Engine**: Sends prompts to the LLM (e.g., "You are a librarian who fixes typos").  
