@@ -97,7 +97,7 @@ awful_book_sanitizer --i /path/to/ocr-books --o /path/to/output --c llama-cpp-co
 
 ## 📌 Credits  
 
-- **Core Authors**: Thomas Gentry \<thomas@awulsec.com\> (the human cranking the flywheel that makes this stuff)
+- **Core Authors**: Thomas Gentry \<thomas@awfulsec.com\> (the human cranking the flywheel that makes this stuff)
 - **Rust Engine**: Written in Rust with `tokio`, `serde`, and `clap`.  
 - **LLM Templates**: Based on OpenAI-compatible endpoints (e.g., `llama-cpp @ localhost` or `Google Colab`).  
 - **Inspiration**: All the bad OCR results you've ever encountered.  
