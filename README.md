@@ -1,6 +1,6 @@
 # 🧪 Awful Book Sanitizer: Transforming Chaos into Clarity  
 
-> *A Rust program that turns OCR-mangled books into readable, sane text. Because nobody wants to read the *literal* results of a neural network.*  
+> *A Rust program that leverages OpenAI-compatible APIs to turn OCR-mangled books into readable, sane text. Because nobody wants to read the *literal* results of a neural network.*  
 
 ---
 
@@ -85,7 +85,7 @@ The hardest part about finetuning an LLM is managing all of the input and output
 
 1. **Install dependencies**:  
    ```bash
-   cargo install awful-book-sanitizer
+   cargo install awful_book_sanitizer
    ```
 
 2. **Run it**:  
@@ -98,7 +98,7 @@ The hardest part about finetuning an LLM is managing all of the input and output
    cat results/book1.yaml
    ```
 
-*If the text looks *too* clean, you might have a problem. But if it's readable, great!*  
+*Please try to refrain from creating accidental heresy.*  
 
 --- 
 
