@@ -24,13 +24,13 @@ o   .     `-. .----<(o)_--. .-'
 λ awful_text_sanitizer --help
 Clean up excerpts from books formatted as txt
 
-Usage: awful_text_sanitizer [OPTIONS] --i <INPUT_DIR> --o <OUTPUT_DIR>
+Usage: awful_text_sanitizer [OPTIONS] --input <INPUT_DIR> --output <OUTPUT_DIR>
 
 Options:
-  -i, --i <INPUT_DIR>   Path to directory of txt files
-  -o, --o <OUTPUT_DIR>  Path to directory where yaml files will be written
-      --c <CONFIG>...   Configuration files (can specify multiple)
-  -h, --help            Print help
+  -i, --input <INPUT_DIR>    Path to directory of txt files
+  -o, --output <OUTPUT_DIR>  Path to directory where yaml files will be written
+      --config <CONFIG>...   Configuration files (can specify multiple)
+  -h, --help                 Print help
 ```
 
 ---

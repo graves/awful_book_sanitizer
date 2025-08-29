@@ -44,15 +44,15 @@ use tokio::time::sleep;
 #[command(about = "Clean up excerpts from books formatted as txt", long_about = None)]
 struct Args {
     /// Path to directory of txt files
-    #[arg(short, long = "i")]
+    #[arg(short, long = "input")]
     input_dir: PathBuf,
 
     /// Path to directory where yaml files will be written
-    #[arg(short, long = "o")]
+    #[arg(short, long = "output")]
     output_dir: PathBuf,
 
     /// Configuration files (can specify multiple)
-    #[arg(long = "c", num_args = 1..)]
+    #[arg(long = "config", num_args = 1..)]
     config: Vec<PathBuf>,
 }
 
