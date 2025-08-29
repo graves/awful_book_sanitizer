@@ -20,7 +20,6 @@
 /// ```bash
 /// awful_book_sanitizer --i /path/to/input --o /path/to/output --c llama-cpp-config.yaml google-colab-config.yaml
 /// ```
-use std::fmt::Write as FmtWrite;
 use std::path::PathBuf;
 use std::{fs, time::Duration};
 
@@ -45,15 +44,15 @@ use tokio::time::sleep;
 #[command(about = "Clean up excerpts from books formatted as txt", long_about = None)]
 struct Args {
     /// Path to directory of txt files
-    #[arg(short, long = "i", value_parser = PathBuf::from)]
+    #[arg(short, long = "i")]
     input_dir: PathBuf,
 
     /// Path to directory where yaml files will be written
-    #[arg(short, long = "o", value_parser = PathBuf::from)]
+    #[arg(short, long = "o")]
     output_dir: PathBuf,
 
     /// Configuration files (can specify multiple)
-    #[arg(long = "c", value_parser = PathBuf::from, num_args = 1..)]
+    #[arg(long = "c", num_args = 1..)]
     config: Vec<PathBuf>,
 }
 

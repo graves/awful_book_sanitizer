@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 text-splitter = { version = "0.25.1", features = ["tiktoken-rs"] }
 tiktoken-rs = "0.6.0"
-awful_aj = { version = "*", path = "../awful_aj" }
+awful_aj = { version = "*", git = "https://github.com/graves/awful_aj" }
 tokio = "1.45.0"
 serde = "1.0.219"
 serde_derive = "1.0.219"
