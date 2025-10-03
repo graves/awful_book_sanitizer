@@ -1,14 +1,35 @@
 [package]
 name = "awful_text_sanitizer"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+rust-version = "1.74"
+authors = ["Thomas Gentry <thomas@awfulsec.com>"]
+license = "CC0-1.0"
+readme = "README.md"
+repository = "https://github.com/graves/awful_text_sanitizer"
+homepage = "https://github.com/graves/awful_text_sanitizer"
+documentation = "https://docs.rs/awful_text_sanitizer"
+description = "CLI to clean up OCR-mangled book excerpts into readable text using OpenAI-compatible APIs."
+keywords = ["ocr", "cli", "text", "sanitizer", "llm"]
+categories = ["command-line-utilities", "text-processing"]
+# Keep the published crate small:
+include = [
+  "src/**",
+  "Cargo.toml",
+  "README.md",
+  "LICENSE*"
+]
 
 [dependencies]
 text-splitter = { version = "0.25.1", features = ["tiktoken-rs"] }
-tiktoken-rs = "0.6.0"
-awful_aj = { version = "*", git = "https://github.com/graves/awful_aj" }
-tokio = "1.45.0"
-serde = "1.0.219"
-serde_derive = "1.0.219"
+tiktoken-rs    = "0.6.0"
+tokio = { version = "1.45.0", features = ["full"] }
+serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 clap = { version = "4.5.38", features = ["derive"] }
+awful_aj = { version = "0.3.6", optional = true }
+
+
+[[bin]]
+name = "awful_text_sanitizer"
+path = "src/main.rs"
