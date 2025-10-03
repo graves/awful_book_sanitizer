@@ -1,25 +1,41 @@
-/// `awful_book_sanitizer`
-///
-/// This command-line interface is used to clean up book excerpts from `.txt` files.
-/// Books processed by OCR are typically full of bad characters, mispelled words,
-/// and poor grammar.
-///
-/// This program processes text files, splits them into 500 token chunks, and uses a
-/// conversational template to ask a Large Language Model running at an OpenAI
-/// compatible endpoint to sanitize (make sane) the text.
-///
-/// The result of each query is appended to an array in a YAML file named
-/// after the input file.
-///
-/// You can pass in multiple configuration files which contain the API url you wish
-/// to send the sanitization request to. The requests will be processed asynchronously
-/// using a thread for each configuration file. This enables you to leverage multiple
-/// LLM instances simultaneosly.
-///
-/// # Example Usage
-/// ```bash
-/// awful_book_sanitizer --i /path/to/input --o /path/to/output --c llama-cpp-config.yaml google-colab-config.yaml
-/// ```
+//! # awful_book_sanitizer
+//!
+//! A command-line tool for cleaning up OCR’d book excerpts from `.txt` files.
+//!
+//! Many scanned books contain corrupted characters, misspelled words, and poor grammar.
+//! This tool reads plain text files, splits them into 500-token chunks, and asks a
+//! Large Language Model (LLM) (via an OpenAI-compatible endpoint) to **sanitize** them.
+//!
+//! The sanitized chunks are appended into YAML files named after the corresponding
+//! input `.txt` file. Each run produces YAML like:
+//!
+//! ```yaml
+//! chunks:
+//!   - |-
+//!     Cleaned text line 1
+//!     Cleaned text line 2
+//! ```
+//!
+//! ## Multi-endpoint concurrency
+//!
+//! You can specify multiple configuration files (`--config` flags), each of which
+//! points to a separate LLM backend (e.g., a local instance, a cloud endpoint).
+//! The tool spawns **one worker thread per configuration file**, allowing multiple
+//! sanitizers to run concurrently across different endpoints.
+//!
+//! ## Example
+//! ```bash
+//! awful_book_sanitizer \
+//!   --input /path/to/input \
+//!   --output /path/to/output \
+//!   --config llama.yaml colab.yaml
+//! ```
+//!
+//! This will:
+//! - Load text files from `/path/to/input`.
+//! - Spawn two threads, one using `llama.yaml`, the other `colab.yaml`.
+//! - Write output YAMLs under `/path/to/output`.
+
 use std::path::PathBuf;
 use std::{fs, time::Duration};
 
@@ -37,32 +53,41 @@ use tiktoken_rs::cl100k_base;
 use tokio::task::spawn_blocking;
 use tokio::time::sleep;
 
-/// CLI arguments
+/// Command-line arguments for `awful_book_sanitizer`.
 #[derive(Parser, Debug)]
 #[command(name = "awful_book_sanitizer")]
-/// Clean up excerpts from books formatted as txt
 #[command(about = "Clean up excerpts from books formatted as txt", long_about = None)]
 struct Args {
-    /// Path to directory of txt files
+    /// Path to directory of `.txt` files to sanitize.
     #[arg(short, long = "input")]
     input_dir: PathBuf,
 
-    /// Path to directory where yaml files will be written
+    /// Path to directory where `.yaml` files will be written.
     #[arg(short, long = "output")]
     output_dir: PathBuf,
 
-    /// Configuration files (can specify multiple)
+    /// One or more configuration files specifying API endpoints.
+    ///
+    /// Each file is parsed into an [`AwfulJadeConfig`] and run in its own worker.
     #[arg(long = "config", num_args = 1..)]
     config: Vec<PathBuf>,
 }
 
-/// Data structure for sanitized book excerpts
+/// Data structure for sanitized book excerpts, returned by the model.
+///
+/// Each LLM response is expected to be valid JSON with this shape.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BookChunk {
-    /// Sanitized text from a book excerpt
+    /// The sanitized text excerpt (cleaned up by the model).
     pub sanitizedBookExcerpt: String,
 }
 
+/// Entry point: parses arguments, spawns worker tasks, and drives sanitization.
+///
+/// For each `--config` file, a separate blocking worker thread is spawned, running
+/// [`process_files`]. All workers run in parallel.
+///
+/// Returns `Ok(())` on success; prints errors to stderr otherwise.
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Parse command-line arguments
@@ -104,24 +129,29 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     Ok(())
 }
 
-/// Process text files and sanitize their content
+/// Process `.txt` files under the given directory and sanitize their contents.
+///
+/// - Splits each file into ~500-token chunks.
+/// - Submits each chunk to the model using [`fetch_with_backoff`].
+/// - Appends sanitized chunks to a YAML file named after the input file.
 ///
 /// # Parameters
-/// - `input_dir`: Path to directory containing `.txt` files to process
+/// - `input_dir`: Path to directory containing `.txt` files.
+/// - `output_dir_path`: Path where YAML files are written.
+/// - `config`: Configuration for model endpoint.
 ///
-/// - `output_dir_path`: Base path where YAML output files will be written (e.g., `/path/to/output`)
+/// # Errors
+/// Returns `Err(String)` on filesystem, config, or API errors. Errors for
+/// individual files/chunks are logged and do not abort other files.
 ///
-/// - `config`: Configuration settings for the sanitization process
-///
-/// # Return Value
-/// - `Result<(), String>`: Returns `Ok(())` on success, or an error message
-///
-/// # Example Usage
-/// ```rust
-/// let result = process_files("/path/to/input", "/path/to/output", config).await;
-/// if let Err(err) = result {
-///     eprintln!("Error: {}", err);
+/// # Example
+/// ```no_run
+/// # async fn demo(cfg: awful_aj::config::AwfulJadeConfig) {
+/// let res = process_files(&"/tmp/books".into(), "/tmp/out", cfg).await;
+/// if let Err(err) = res {
+///     eprintln!("Sanitization failed: {err}");
 /// }
+/// # }
 /// ```
 async fn process_files(
     input_dir: &PathBuf,
@@ -158,7 +188,7 @@ async fn process_files(
                 .map_err(|e| e.to_string())?;
 
             // Write YAML header
-            writeln!(file, "chunks:").map_err(|e| e.to_string())?; // Write YAML header
+            writeln!(file, "chunks:").map_err(|e| e.to_string())?;
 
             // Read and process the text content
             let contents = fs::read_to_string(&path).map_err(|e| e.to_string())?;
@@ -181,21 +211,26 @@ async fn process_files(
     Ok(())
 }
 
-/// Write a sanitized text chunk to YAML file
+/// Append a sanitized text chunk to an output YAML file.
+///
+/// Each chunk is written as:
+/// ```yaml
+///   - |-
+///     line 1
+///     line 2
+/// ```
 ///
 /// # Parameters
-/// - `chunk`: The sanitized text content to write
+/// - `chunk`: Sanitized text to append.
+/// - `yaml_path`: Path to YAML file (modified by reference).
 ///
-/// - `yaml_path`: Path to the YAML file (modified by reference)
+/// # Errors
+/// Returns any I/O or formatting errors encountered.
 ///
-/// # Return Value
-/// - `Result<(), Box<dyn Error + Send + Sync>>`:
-///   - `Ok(())` on success
-///
-/// # Example Usage
-/// ```rust
-/// let mut yaml_path = "/path/to/output.yaml".to_string();
-/// write_row_to_file("Sanitized content", &mut yaml_path).unwrap();
+/// # Example
+/// ```no_run
+/// let mut yaml_path = "/tmp/out/book.yaml".to_string();
+/// write_row_to_file("Cleaned text".into(), &mut yaml_path).unwrap();
 /// ```
 pub fn write_row_to_file(
     chunk: String,
@@ -215,37 +250,34 @@ pub fn write_row_to_file(
     Ok(())
 }
 
-/// Fetch sanitized text with exponential backoff for reliability
-///
-/// # Parameters
-/// - `config`: Configuration settings for the sanitization process
-///
-/// - `chunk`: The text chunk to sanitize (as a string)
-///
-/// - `template`: Template for sanitization instructions
-///
-/// # Return Value
-/// - `Result<Option<String>, Box<dyn Error + Send + Sync>>`:
-///   - `Ok(Some(sanitized_text))` if successful
-///   - `Ok(None)` if no response or empty result
-///   - `Err(errorMsg)` for errors (e.g., API failures, configuration issues)
-///
-/// # Example Usage
-/// ```rust
-/// let config = ...; // Loaded configuration
-/// let chunk = "Sample text to sanitize";
-/// let template = ChatTemplate::new("Ask");
-///
-/// match fetch_with_backoff(&config, chunk, &template).await {
-///     Ok(Some(text)) => println!("Sanitized: {}", text),
-///     Ok(None) => println!("No response from API"),
-///     Err(e) => eprintln!("Error: {}", e),
-/// }
-/// ```
-///
+// The maximum number of times to retry a request to the LLM service.
 const MAX_RETRIES: u32 = 5;
+// The initial delay between retries that grows exponentially.
 const BASE_DELAY_MS: u64 = 500;
 
+/// Call the model to sanitize a text chunk with exponential backoff.
+///
+/// Retries failed API requests up to [`MAX_RETRIES`] times, waiting
+/// `BASE_DELAY_MS * 2^attempt` ms between tries.
+///
+/// # Parameters
+/// - `config`: Model configuration (endpoint, key, etc.).
+/// - `chunk`: Text chunk to sanitize.
+/// - `template`: Sanitization prompt template.
+///
+/// # Returns
+/// - `Ok(Some(cleaned_text))` if successful.
+/// - `Ok(None)` if the API responded with an empty result (`"{}"`).
+/// - `Err` if all retries failed or response parse failed.
+///
+/// # Example
+/// ```no_run
+/// # async fn demo(cfg: awful_aj::config::AwfulJadeConfig, t: awful_aj::template::ChatTemplate) {
+/// if let Ok(Some(text)) = fetch_with_backoff(&cfg, "raw text", &t).await {
+///     println!("Sanitized: {text}");
+/// }
+/// # }
+/// ```
 async fn fetch_with_backoff(
     config: &AwfulJadeConfig,
     chunk: &str,
@@ -264,7 +296,7 @@ async fn fetch_with_backoff(
                 }
             }
             Err(err) => {
-                eprintln!("Request failed: {}", err); // Log error
+                eprintln!("Request failed: {}", err);
             }
         }
 

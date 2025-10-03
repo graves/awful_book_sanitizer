@@ -1,0 +1,82 @@
+{
+  "root": ".",
+  "updated_at": "2025-10-03T07:33:46.761373Z",
+  "entries": [
+    {
+      "kind": "file",
+      "name": "Cargo.toml",
+      "path": "Cargo.toml",
+      "hash": "1082232454ef8faa327c64a81cff24e5ef7374fb4d6c526e9a6d0d7cdd38ae24",
+      "updated_at": "2025-10-03T07:32:45.585093Z",
+      "doc": {
+        "fileDescription": "Configures the awful_book_sanitizer project with dependencies and settings for Rust build.",
+        "joyThisFileBrings": 8,
+        "personalityEmoji": "📦"
+      }
+    },
+    {
+      "kind": "file",
+      "name": "README.md",
+      "path": "README.md",
+      "hash": "bb97246c9c4a0fb848e074e5538d34e7e1933cf108d18a26e8c65446a426ab20",
+      "updated_at": "2025-10-03T07:33:21.789085Z",
+      "doc": {
+        "fileDescription": "Transforms OCR-mangled texts into readable formats using OpenAI-compatible APIs.",
+        "joyThisFileBrings": 8,
+        "personalityEmoji": "🤖"
+      }
+    },
+    {
+      "kind": "dir",
+      "name": "src",
+      "path": "src",
+      "updated_at": "2025-10-03T07:33:46.761382Z",
+      "entries": [
+        {
+          "kind": "file",
+          "name": "main.rs",
+          "path": "src/main.rs",
+          "hash": "050aa141de39f9395f736032e14b63a77bf56ab08e03f4add81b568fd1a69f12",
+          "updated_at": "2025-10-03T07:33:34.860888Z",
+          "doc": {
+            "fileDescription": "Sanitizes OCR-mangled books into readable text using LLMs",
+            "joyThisFileBrings": 8,
+            "personalityEmoji": "🤖"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "file",
+      "name": "Cargo.lock",
+      "path": "Cargo.lock",
+      "hash": "eb0266ed7676e43a02bddf9e195316cf6c0fbf06925de33c86a3fb4afd55163a",
+      "updated_at": "2025-10-03T07:33:08.185570Z",
+      "doc": {
+        "fileDescription": "Maintains dependency versions for the awesome_book_sanitizer project.",
+        "joyThisFileBrings": 8,
+        "personalityEmoji": "🦀"
+      }
+    },
+    {
+      "kind": "dir",
+      "name": "output",
+      "path": "output",
+      "updated_at": "2025-10-03T07:33:46.761386Z",
+      "entries": [
+        {
+          "kind": "file",
+          "name": "remove_ctrl_chars.nu",
+          "path": "output/remove_ctrl_chars.nu",
+          "hash": "8211fe4597941e5eebea2afc4ac08d154dd0d9e71441fc145a4ac46c96e10a43",
+          "updated_at": "2025-10-03T07:32:58.485879Z",
+          "doc": {
+            "fileDescription": "Transforms text by handling control characters, encoding/decoding UTF-8, and removing problematic sequences.",
+            "joyThisFileBrings": 7,
+            "personalityEmoji": "🐍"
+          }
+        }
+      ]
+    }
+  ]
+}
