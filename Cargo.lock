@@ -274,7 +274,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "awful_text_sanitizer"
+name = "awful_book_sanitizer"
 version = "0.1.1"
 dependencies = [
  "awful_aj",

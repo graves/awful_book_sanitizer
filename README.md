@@ -21,10 +21,10 @@ o   .     `-. .----<(o)_--. .-'
 ```
 
 ```
-λ awful_text_sanitizer --help
+λ awful_book_sanitizer --help
 Clean up excerpts from books formatted as txt
 
-Usage: awful_text_sanitizer [OPTIONS] --input <INPUT_DIR> --output <OUTPUT_DIR>
+Usage: awful_book_sanitizer [OPTIONS] --input <INPUT_DIR> --output <OUTPUT_DIR>
 
 Options:
   -i, --input <INPUT_DIR>    Path to directory of txt files

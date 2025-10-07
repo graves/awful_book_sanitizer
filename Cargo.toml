@@ -1,14 +1,14 @@
 [package]
-name = "awful_text_sanitizer"
+name = "awful_book_sanitizer"
 version = "0.1.1"
 edition = "2021"
 rust-version = "1.74"
 authors = ["Thomas Gentry <thomas@awfulsec.com>"]
 license = "CC0-1.0"
 readme = "README.md"
-repository = "https://github.com/graves/awful_text_sanitizer"
-homepage = "https://github.com/graves/awful_text_sanitizer"
-documentation = "https://docs.rs/awful_text_sanitizer"
+repository = "https://github.com/graves/awful_book_sanitizer"
+homepage = "https://github.com/graves/awful_book_sanitizer"
+documentation = "https://docs.rs/awful_book_sanitizer"
 description = "CLI to clean up OCR-mangled book excerpts into readable text using OpenAI-compatible APIs."
 keywords = ["ocr", "cli", "text", "sanitizer", "llm"]
 categories = ["command-line-utilities", "text-processing"]
@@ -31,5 +31,5 @@ awful_aj = "0.3.6"
 
 
 [[bin]]
-name = "awful_text_sanitizer"
+name = "awful_book_sanitizer"
 path = "src/main.rs"
